@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const jwt = require("jsonwebtoken")
 
 const app = express();
 const port = 8080;
@@ -9,7 +10,7 @@ const port = 8080;
 app.use(express.json());
 app.use(cors());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.4mlzp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -24,6 +25,7 @@ async function run() {
     const productsCollection = client
       .db("fandaCommerce")
       .collection("products");
+      const usersCollection = client.db("fandaCommerce").collection("users")
 
     app.get("/products", async (req, res) => {
       const result = await productsCollection.find({}).toArray();
@@ -32,14 +34,14 @@ async function run() {
 
     app.get("/new-arrival", async (req, res) => {
       const query = {};
-      const result = await productCollection.find(query).toArray();
+      const result = await productsCollection.find(query).toArray();
       res.send(result);
     });
 
     app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const result = await productCollection.findOne(query);
+      const result = await productsCollection.findOne(query);
       res.send(result);
     });
 
@@ -52,15 +54,16 @@ async function run() {
 
     app.post("/login", async (req, res) => {
       const { email } = req.body;
-      const findUser = await userCollection.findOne({ email });
+      const findUser = await usersCollection.findOne({ email });
       const token = jwt.sign(email, process.env.ACCESS_SECRET_TOKEN);
       if (findUser) {
         res.send({ token });
       } else {
-        const result = await userCollection.insertOne({ email });
+        const result = await usersCollection.insertOne({ email });
         res.send({ result, token });
       }
     });
+
   } finally {
   }
 }
