@@ -48,7 +48,7 @@ async function run() {
     app.get("/category/:title", async (req, res) => {
       const { title } = req.params;
       const query = { category: { $elemMatch: { $in: [title] } } };
-      const result = await productCollection.find(query).toArray();
+      const result = await productsCollection.find(query).toArray();
       res.send(result);
     });
 
