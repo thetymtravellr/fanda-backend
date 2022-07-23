@@ -4,7 +4,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken")
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 //middleware
 app.use(express.json());
@@ -77,3 +77,6 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(port);
 });
+
+
+// devil.robiul.11
