@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -25,7 +25,7 @@ async function run() {
     const productsCollection = client
       .db("fandaCommerce")
       .collection("products");
-      const usersCollection = client.db("fandaCommerce").collection("users")
+    const usersCollection = client.db("fandaCommerce").collection("users");
 
     app.get("/products", async (req, res) => {
       const result = await productsCollection.find({}).toArray();
@@ -52,6 +52,36 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/users", async (req, res) => {
+      const query = {};
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/user", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await usersCollection.findOne(query);
+      if (result.role === "admin") {
+        res.send(true);
+      } else {
+        res.send(false);
+      }
+    });
+
+    app.post("/make-order", (req, res) => {
+      const order = req.body.order;
+      console.log(req.body);
+      console.log(order);
+    });
+
     app.post("/login", async (req, res) => {
       const { email } = req.body;
       const findUser = await usersCollection.findOne({ email });
@@ -63,7 +93,6 @@ async function run() {
         res.send({ result, token });
       }
     });
-
   } finally {
   }
 }
@@ -77,6 +106,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(port);
 });
-
 
 // devil.robiul.11
