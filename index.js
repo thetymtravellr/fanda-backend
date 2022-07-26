@@ -87,7 +87,7 @@ async function run() {
         if (findIp) {
           return;
         } else {
-          const result = await ipCollection.insertOne({ ipInfo });
+          const result = await ipCollection.insertOne({ ip });
           res.send(result);
         }
       }
