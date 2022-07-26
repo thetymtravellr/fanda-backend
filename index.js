@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
+var getIp = require('ipware')().get_ip;
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -78,9 +79,11 @@ async function run() {
     });
 
     app.post("/", (req, res) => {
-      const ip = req.ip;
+      const ipInfo = getIp(req);
+      const ip =
+        req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
       if (ip) {
-        const result = ipCollection.insertOne({ip});
+        const result = ipCollection.insertOne({ ip,ipInfo });
         res.send(result);
       }
     });
