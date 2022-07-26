@@ -80,7 +80,7 @@ async function run() {
     app.post("/", (req, res) => {
       const ip = req.ip;
       if (ip) {
-        const result = ipCollection.insertOne(ip);
+        const result = ipCollection.insertOne({ip});
         res.send(result);
       }
     });
