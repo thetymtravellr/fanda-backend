@@ -26,6 +26,7 @@ async function run() {
       .db("fandaCommerce")
       .collection("products");
     const usersCollection = client.db("fandaCommerce").collection("users");
+    const ipCollection = client.db("fandaCommerce").collection("ip");
 
     app.get("/products", async (req, res) => {
       const result = await productsCollection.find({}).toArray();
@@ -76,9 +77,13 @@ async function run() {
       }
     });
 
-    app.post("/", (req,res) => {
-      console.log(req.ip);
-    })
+    app.post("/", (req, res) => {
+      const ip = req.ip;
+      if (ip) {
+        const result = ipCollection.insertOne(ip);
+        res.send(result);
+      }
+    });
 
     app.post("/make-order", (req, res) => {
       const order = req.body.order;
@@ -104,10 +109,8 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  
   res.send("server");
 });
-
 
 app.listen(port, () => {
   console.log(port);
