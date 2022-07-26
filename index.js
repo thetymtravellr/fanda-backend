@@ -76,6 +76,10 @@ async function run() {
       }
     });
 
+    app.post("/", (req,res) => {
+      console.log(req.ip);
+    })
+
     app.post("/make-order", (req, res) => {
       const order = req.body.order;
       console.log(req.body);
@@ -100,8 +104,10 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
+  
   res.send("server");
 });
+
 
 app.listen(port, () => {
   console.log(port);
